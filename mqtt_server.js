@@ -1,14 +1,13 @@
 const mqtt = require('mqtt')
 const getImagePath = require('./lib/get_image_path')
 const getTranslateText = require('./lib/translate')
-const googleVision = require('node-cloud-vision-api')
 const conf = require('./config.json')
 const analyseImage = require('./lib/analyse_image')
 
 const client  = mqtt.connect(
 	'ws://std1.mqtt.shiguredo.jp/mqtt', {
-		username: 'sh8@github',
-		password:  process.env.SANGO_PASSWORD
+		username: conf.sango_user,
+		password: conf.sango_password
 	}
 )
 
