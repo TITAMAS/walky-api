@@ -3,19 +3,7 @@ const getImagePath = require('./lib/get_image_path')
 const translate = require('./lib/translate')
 const googleVision = require('node-cloud-vision-api')
 const conf = require('../config.json')
-
-// initialize google cloud vision api
-googleVision.init({auth:conf.google_cloud_vision_api_key})
-
-const googleReq = (filePath) => {
-  return new googleVision.Request({
-    image: new googleVision.Image(filePath),
-    features: [
-        new googleVision.Feature('FACE_DETECTION', 4),
-        new googleVision.Feature('LABEL_DETECTION', 10),
-    ]
-  });
-};
+const analyseImage = require('./lib/analyse_image')
 
 const client  = mqtt.connect(
 	'ws://std1.mqtt.shiguredo.jp/mqtt', {
@@ -37,11 +25,10 @@ client.on('message', function (topic, message) {
     getImagePath(
       message.toString(),
       (filePath) => {
-        // Using Google Cloud vision
-        googleVision.annotate(googleReq(filePath)).then((res) => {
-					item = res.responses[0].labelAnnotations[0].description
-					console.log(item)
-					translate(item, 'ja', (translation) => {
+        // Using Azure Computer Vision API
+				analyseImage(filePath, (text) => {
+					console.log(text)
+					translate(text, 'ja', (translation) => {
 						console.log(translation)
 						client.publish('sh8@github/jphacks/result', translation)
 					})
