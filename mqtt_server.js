@@ -13,7 +13,6 @@ const client  = mqtt.connect(
 
 client.on('connect', function () {
 	client.subscribe('sh8@github/jphacks/image')
-	client.publish('sh8@github/jphacks/result', 'Hello mqtt')
 })
 
 client.on('message', function (topic, message) {
