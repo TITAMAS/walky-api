@@ -3,6 +3,7 @@ const getImagePath = require('./lib/get_image_path')
 const getTranslateText = require('./lib/translate')
 const conf = require('./config.json')
 const analyseImage = require('./lib/analyse_image')
+const isDanger = require('./lib/is_danger')
 
 const client  = mqtt.connect(
 	'ws://std1.mqtt.shiguredo.jp/mqtt', {
@@ -14,7 +15,9 @@ const client  = mqtt.connect(
 client.on('connect', function () {
 	client.subscribe('sh8@github/jphacks/image')
 	client.publish('sh8@github/jphacks/result', 'Hello mqtt')
-})
+
+	console.log('----- CONNECTED TO SHIGUREDO -----')
+});
 
 client.on('message', function (topic, message) {
 	console.log('\n')
@@ -31,9 +34,8 @@ client.on('message', function (topic, message) {
 					getTranslateText(text, (translation) => {
 						console.log(translation)
 						client.publish('sh8@github/jphacks/result', translation)
-					})
-				})
-			}
-		)
-	}
-})
+					});
+				});
+			});
+		}
+	});
